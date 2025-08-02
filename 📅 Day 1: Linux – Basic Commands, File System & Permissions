@@ -1,0 +1,82 @@
+📅 Day 1: Linux – Basic Commands, File System & Permissions
+30 Days DevOps Interview Preparation
+
+📂 Linux File System Overview
+/ – Root directory
+
+/bin – Essential binaries (e.g., ls, cp)
+
+/etc – System configuration files
+
+/var – Logs and spool files
+
+/usr – User-installed programs
+
+/home – User home directories
+
+/tmp – Temporary files
+
+🧰 Basic Linux Commands
+# Navigation & File Handling
+
+ls -l            # List with permissions
+cd /path         # Change directory
+pwd              # Show current path
+mkdir test       # Create directory
+touch file.txt   # Create file
+rm -rf folder/   # Remove folder and contents
+
+# System Info
+
+uname -a         # System info
+df -h            # Disk space
+top              # Running processes
+whoami           # Current user
+uptime           # System uptime
+
+# Searching
+
+find / -name "file.txt"
+grep "text" filename
+🔐 File Permissions
+
+# Permission Types
+
+r: Read
+
+w: Write
+
+x: Execute
+
+# Permission Syntax
+
+ls -l file.txt         # Show permissions
+chmod 755 script.sh    # Set rwxr-xr-x
+chown user:group file  # Change owner
+Numeric Permission Values
+
+# Value	Meaning
+7	rwx
+6	rw-
+5	r-x
+4	r--
+
+❓ Common Interview Questions
+Explain Linux file system hierarchy.
+
+What does chmod 777 do?
+
+How to check running processes?
+
+Difference between hard link and symbolic link?
+
+What is the sticky bit and where is it used?
+
+💻 Practice Tasks
+Create a new user and set file permissions.
+
+Explore /etc/passwd and /etc/shadow.
+
+Find all .log files larger than 10MB.
+
+Write a one-liner to count lines in .conf files.
