@@ -1,0 +1,74 @@
+📅 Day 2: Linux – Users, Processes, systemctl, journald
+30 Days DevOps Interview Preparation
+
+---
+
+👤 Linux Users and Groups
+
+- Types of users: root, system, normal
+- Files:
+  - /etc/passwd – user info
+  - /etc/shadow – password info
+  - /etc/group – group info
+
+Commands:
+  useradd devuser
+  passwd devuser
+  usermod -aG sudo devuser
+  id devuser
+  groups devuser
+
+---
+
+🔄 Process Management
+
+- ps aux         # List all processes
+- top            # Live resource usage
+- htop           # Enhanced top
+- kill <PID>     # Terminate process
+- kill -9 <PID>  # Force kill
+- nice / renice  # Manage priority
+- pstree         # Tree of processes
+
+---
+
+⚙️ systemctl – Service Management
+
+- systemctl status <svc>        # View service
+- systemctl start|stop <svc>    # Start/stop
+- systemctl restart <svc>       # Restart service
+- systemctl enable|disable <svc>  # Autostart control
+
+States:
+- active, inactive, failed
+
+---
+
+📜 journald – Logs with journalctl
+
+- journalctl                    # All logs
+- journalctl -u <service>       # Specific service
+- journalctl -b                 # Since last boot
+- journalctl -xe                # Recent errors
+- journalctl --since "1 hour ago"
+
+---
+
+🎯 Interview Questions
+
+- Explain the difference between passwd and shadow files.
+- How do you kill a stuck process?
+- What is the role of systemd?
+- How do you view logs of a failed systemd service?
+
+---
+
+🧪 Practice Tasks
+
+- Add a user, set password, assign to group
+- Start/stop system services
+- Kill a background process using PID
+- Use journalctl to check nginx/docker logs
+
+---
+
