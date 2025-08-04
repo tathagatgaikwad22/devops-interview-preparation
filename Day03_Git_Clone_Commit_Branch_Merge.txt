@@ -1,0 +1,151 @@
+📅 Day 3: Git – Clone, Commit, Branch, Merge
+30 Days DevOps Interview Preparation
+
+---
+
+🧠 WHAT YOU'LL LEARN
+
+✔️ How to clone repositories  
+✔️ Staging and committing changes  
+✔️ Creating and working with branches  
+✔️ Merging branches and resolving conflicts  
+✔️ Common Git interview questions and answers
+
+---
+
+📥 git clone
+
+Cloning creates a full local copy of a remote Git repository.
+
+Syntax:
+  git clone <repo_url>
+
+Example:
+  git clone https://github.com/example/project.git
+
+This command:
+- Initializes a new local repo with `.git`
+- Copies files, branches, and history
+- Sets the "origin" as the default remote
+
+---
+
+✅ git commit
+
+`commit` saves staged changes to your local Git history.
+
+Basic Workflow:
+  git add .                     # Stage changes
+  git commit -m "feat: add auth handler"  # Commit with message
+
+Best Practices:
+- Use descriptive messages (e.g., feat, fix, docs, chore)
+- Commit small, focused changes
+- Avoid committing secrets or large binaries
+
+View history:
+  git log
+  git log --oneline --graph     # Visual view of commit tree
+
+---
+
+🌿 git branch
+
+Branches allow isolated development (e.g., features, bugfixes).
+
+Commands:
+  git branch                  # List branches
+  git branch dev              # Create new branch
+  git checkout dev            # Switch to branch
+  git checkout -b feature/ui  # Create and switch in one command
+
+Always use separate branches for features or fixes.
+
+---
+
+🔀 git merge
+
+Merging brings changes from one branch into another.
+
+Workflow:
+  git checkout main
+  git merge feature-xyz
+
+Git will try to automatically merge changes.  
+If there are conflicting changes, Git will prompt you to resolve them manually.
+
+Resolve Conflicts:
+- Open the conflicting file
+- Edit between <<<<<<<, =======, >>>>>>> lines
+- Save, then:
+  git add <file>
+  git commit
+
+---
+
+🧠 INTERVIEW QUESTIONS & ANSWERS
+
+1. What is the difference between `git fetch` and `git pull`?
+
+  ✅ `git fetch` downloads changes from remote but doesn't apply them.
+  ✅ `git pull` = `git fetch` + `git merge` into current branch.
+  Use `fetch` when you want to review changes before merging.
+
+---
+
+2. How do you resolve a merge conflict?
+
+Steps:
+- Git marks the conflict area in the file:
+    <<<<<<< HEAD
+    Your changes
+    =======
+    Incoming changes
+    >>>>>>> feature-branch
+
+- Manually edit the file, keep the desired version
+- Stage the fixed file with `git add`
+- Commit the merge
+
+---
+
+3. Why use branches in Git?
+
+✅ To isolate features, experiments, and bugfixes  
+✅ Enables collaboration without interfering with the main code  
+✅ Supports parallel workflows
+
+---
+
+4. What is the difference between `merge` and `rebase`?
+
+| Command  | Behavior                            | Result                          |
+|----------|-------------------------------------|---------------------------------|
+| merge    | Combines commits; creates merge commit | Preserves full history          |
+| rebase   | Moves your commits onto base branch | Cleaner, linear history         |
+
+Use `merge` in teams. Use `rebase` before merging to squash/fix history.
+
+---
+
+5. Typical Git workflow for new feature development?
+
+```bash
+git checkout -b feature/new-login
+# work on feature
+git add .
+git commit -m "feat: new login form"
+git push origin feature/new-login
+# create pull request and merge after review
+
+---------------------------------------------
+
+💻 HANDS-ON PRACTICE
+
+Clone any GitHub repo using git clone
+Create a branch, make a change, and commit it
+Merge your branch into main
+Edit the same file in two branches, then merge → resolve the conflict
+Use git log and git status to inspect your repo state
+
+---------------------------------------------
