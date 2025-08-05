@@ -1,0 +1,113 @@
+
+30 Days DevOps Interview Preparation
+Day 4: GitHub - Fork, Pull Request, Webhook, Collaboration
+Date: August 05, 2025
+
+---
+
+🔹 FORK
+
+Definition:
+A fork is a copy of a repository under your own GitHub account. It allows you to freely experiment with changes without affecting the original project.
+
+Why it's important:
+- Enables you to contribute to someone else's project.
+- Used to customize or experiment safely with a codebase.
+
+Workflow:
+1. Click "Fork" on a public repo.
+2. Make changes in your forked version.
+3. Submit a Pull Request back to the original repository for review.
+
+---
+
+🔹 PULL REQUEST (PR)
+
+Definition:
+A Pull Request is a request to merge changes from one branch or fork into another branch of the base repository.
+
+Purpose:
+- Collaboration on projects
+- Enabling code review and testing
+- Protecting production code from unreviewed changes
+
+Example Flow:
+1. git checkout -b feature/new-feature
+2. Make changes and commit
+3. git push origin feature/new-feature
+4. Open a PR on GitHub
+
+Includes:
+- Title + Description
+- Code Diff View
+- Reviewers
+- Status Checks (CI/CD)
+
+---
+
+🔹 WEBHOOKS
+
+Definition:
+Webhooks allow external services to be notified when certain events happen in a repository.
+
+Common Use Cases:
+- Trigger Jenkins builds
+- Send Slack alerts
+- Integrate with monitoring systems
+
+How to Set Up:
+1. Settings → Webhooks → Add Webhook
+2. Input URL (e.g., Jenkins job URL)
+3. Select content type and events to trigger
+
+Example:
+A push to the 'main' branch triggers a Jenkins job via webhook.
+
+---
+
+🔹 COLLABORATION ON GITHUB
+
+Collaboration Features:
+- Issues: Track bugs and enhancements
+- Labels: Categorize tasks (bug, feature, etc.)
+- Milestones: Manage project timelines
+- Assignees: Assign team members to tasks
+- Reviewers: Require approvals before merging
+- Protected Branches: Prevent unauthorized changes
+
+Best Practices:
+- Use meaningful commit messages.
+- Create feature branches for every new feature.
+- Use PR templates and issue templates.
+- Review code using GitHub’s built-in tools.
+- Enforce CI/CD and lint checks with GitHub Actions.
+
+---
+
+🔎 INTERVIEW QUESTIONS
+
+Q1: What is the difference between a fork and a clone?
+A: Fork is a GitHub-level operation copying the repo to your account. Clone is a Git-level operation that copies the repo to your local system.
+
+Q2: How does a Pull Request work?
+A: PRs propose changes from one branch/fork to another. They allow team discussion, review, and automated checks before merging.
+
+Q3: What is a webhook?
+A: A webhook is a real-time communication mechanism that sends data to an external service when an event occurs in the repository.
+
+Q4: How does GitHub support collaboration?
+A: Through pull requests, code reviews, issues, milestones, labels, assignees, and branch protection rules.
+
+---
+
+🧪 PRACTICE TASKS
+
+- Fork a public repository and clone it locally
+- Create a new branch and push changes
+- Open a pull request and simulate review
+- Set up a webhook to Jenkins or Slack
+- Enable branch protection rules in GitHub
+
+---
+
+#30DaysOfDevOps #GitHub #PullRequest #Webhook #Collaboration #DevOpsInterviewPrep
