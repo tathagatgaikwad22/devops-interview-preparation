@@ -1,0 +1,127 @@
+# Day 5: Bash Scripting – Loops, Functions, Exit Codes
+
+📅 Date: August 06, 2025
+🎯 Topic: Bash scripting fundamentals – loops, functions, and exit codes
+
+---
+
+## 🔁 Bash Loops
+
+### ➤ For Loop
+```bash
+for i in {1..5}; do
+  echo "Iteration $i"
+done
+```
+Use for iterating through a sequence of values.
+
+### ➤ While Loop
+```bash
+count=1
+while [ $count -le 5 ]; do
+  echo "Count: $count"
+  ((count++))
+done
+```
+Use while a condition is true.
+
+### ➤ Until Loop
+```bash
+count=1
+until [ $count -gt 5 ]; do
+  echo "Count: $count"
+  ((count++))
+done
+```
+Runs until condition becomes true.
+
+---
+
+## 🔧 Bash Functions
+
+### ➤ Function Declaration & Usage
+```bash
+say_hello() { 
+  echo "Hello, $1!" 
+}
+
+say_hello "Tathagat"
+```
+
+### ➤ Returning Values from Functions
+```bash
+add() {
+  local sum=$(( $1 + $2 ))
+  echo $sum
+}
+
+result=$(add 5 15)
+echo "Sum is: $result"
+```
+
+Use `echo` for returning strings and `return` for exit codes.
+
+---
+
+## 🚪 Exit Codes
+
+- **0**: Success
+- **1-255**: Error/Failure
+
+### ➤ Check Exit Code
+```bash
+ls /nonexistent_dir
+echo $?  # Non-zero exit code
+```
+
+### ➤ Abort on Error
+```bash
+#!/bin/bash
+set -euo pipefail
+```
+
+- `-e`: Exit on any error
+- `-u`: Treat unset variables as error
+- `pipefail`: Catch failure in any part of pipeline
+
+---
+
+## ❓ Common Interview Questions
+
+1. **What are different loops in Bash?**  
+   - `for`, `while`, and `until`.
+
+2. **How to pass parameters to a function?**  
+   - Use `$1`, `$2`, etc.
+
+3. **How are exit codes useful?**  
+   - Determine command/script success/failure.
+
+4. **Difference between echo and return?**  
+   - `echo` is used to output data; `return` is for numeric exit codes.
+
+5. **What does `set -euo pipefail` do?**  
+   - Adds strict error handling to your script.
+
+---
+
+## 🧠 Real World Use Case
+
+```bash
+check_service() {
+  systemctl is-active "$1" >/dev/null
+  if [ $? -eq 0 ]; then
+    echo "$1 is running."
+  else
+    echo "$1 is not running."
+  fi
+}
+
+check_service nginx
+```
+
+---
+
+✅ Keep practicing by writing scripts that automate repetitive tasks in your environment.
+
+📂 Repo: Add this as `Day05_Bash_Scripting.txt` in your DevOps Interview Prep GitHub repo.
