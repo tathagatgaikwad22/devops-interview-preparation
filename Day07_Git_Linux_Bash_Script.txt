@@ -1,0 +1,157 @@
+# 📅 Day 7 – DevOps Interview Preparation Challenge  
+## Topic: Linux Cheat Sheet, Git Cheat Sheet, Bash Script Cheat Sheet  
+
+Welcome to **Day 7** of the **30 Days of DevOps Interview Preparation** challenge.  
+Today’s goal is to master essential **Linux**, **Git**, and **Bash scripting** commands — the everyday tools of a DevOps Engineer.  
+These cheat sheets will help you quickly recall important commands during interviews and on the job.
+
+---
+
+## 🐧 Linux Cheat Sheet  
+
+### **1. File Navigation**
+| Command | Description |
+|---------|-------------|
+| `pwd` | Show current working directory |
+| `ls` | List files in directory |
+| `cd <dir>` | Change directory |
+| `tree` | Display directories in a tree format |
+| `find <path> -name <file>` | Search for files/directories |
+
+### **2. File Management**
+| Command | Description |
+|---------|-------------|
+| `touch file.txt` | Create an empty file |
+| `cp file1 file2` | Copy file |
+| `mv file1 file2` | Move/rename file |
+| `rm file.txt` | Remove file |
+| `cat file.txt` | View file contents |
+| `nano file.txt` / `vim file.txt` | Edit files |
+
+### **3. Permissions**
+| Command | Description |
+|---------|-------------|
+| `chmod 755 file.sh` | Change file permissions |
+| `chown user:group file.txt` | Change file owner |
+| `umask` | View default permission mask |
+
+### **4. Process Management**
+| Command | Description |
+|---------|-------------|
+| `ps aux` | Show running processes |
+| `top` / `htop` | Real-time process monitoring |
+| `kill <PID>` | Kill a process |
+| `systemctl status service` | Check service status |
+
+### **5. Networking**
+| Command | Description |
+|---------|-------------|
+| `ping <host>` | Check network connectivity |
+| `curl <url>` | Fetch data from URL |
+| `wget <url>` | Download files from the web |
+| `netstat -tulnp` | View listening ports |
+| `ss -tuln` | Check active connections |
+
+### **6. Disk Usage**
+| Command | Description |
+|---------|-------------|
+| `df -h` | Show disk space usage |
+| `du -sh` | Show folder size |
+| `lsblk` | List block devices |
+| `mount /dev/sdX /mnt` | Mount a device |
+
+---
+
+## 🔧 Git Cheat Sheet  
+
+### **1. Config & Setup**
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+
+2. Basic Workflow
+
+git init                 # Initialize a repository
+git clone <repo-url>     # Clone repository
+git status               # Show changes
+git add <file>           # Stage changes
+git commit -m "message"  # Commit changes
+
+3. Branching & Merging
+
+git branch               # List branches
+git checkout -b new-branch # Create and switch to new branch
+git merge branch-name    # Merge branch into current branch
+
+4. History & Logs
+
+git log --oneline --graph --decorate
+
+5. Undoing Changes
+
+git reset --hard HEAD~1  # Undo last commit
+git revert <commit-id>   # Revert a commit
+git stash                # Save changes temporarily
+
+6. Remote Operations
+
+git remote add origin <url>
+git push -u origin main
+git pull origin main
+git fetch origin
+
+
+---
+
+⚙ Bash Script Cheat Sheet
+
+1. Shebang
+
+#!/bin/bash
+
+2. Variables
+
+name="DevOps"
+echo "Hello, $name"
+
+3. Conditionals
+
+if [ $x -gt 10 ]; then
+    echo "Greater than 10"
+else
+    echo "Less or equal to 10"
+fi
+
+4. Loops
+
+for i in {1..5}; do
+    echo "Count: $i"
+done
+
+5. Functions
+
+greet() {
+    echo "Hello $1"
+}
+greet "World"
+
+6. Script Permissions
+
+chmod +x script.sh
+./script.sh
+
+
+---
+
+📌 Key Takeaways
+
+Linux is the foundation of DevOps — speed in navigation and file management is critical.
+
+Git is essential for collaboration — mastering it improves workflow efficiency.
+
+Bash scripting unlocks automation, which is at the heart of DevOps.
+
+
+---
+
+#30DaysOfDevOps #Linux #Git #Bash #ShellScripting #DevOpsInterviewPreparation #CheatSheet
