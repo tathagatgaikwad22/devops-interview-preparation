@@ -1,0 +1,193 @@
+# Day 9 – Jenkins Pipeline Basics (Declarative) | #30DaysOfDevOps
+
+## 📌 Introduction
+Jenkins Pipelines have transformed CI/CD from a set of click-based Freestyle jobs to a code-defined, version-controlled process. This allows better collaboration, traceability, and automation.
+
+The **Declarative Pipeline** syntax offers a simplified, structured way to write pipelines, making it beginner-friendly and easier to maintain.
+
+---
+
+## 1. What is a Jenkins Pipeline?
+A **Jenkins Pipeline** is a series of steps that automate the process of building, testing, and deploying software. Pipelines are written in a `Jenkinsfile` and executed by Jenkins.
+
+### Key Benefits:
+- **Code-based CI/CD**: Stored in Git for version control
+- **Multiple stages**: Build → Test → Deploy
+- **Easy rollback**: Track and revert changes easily
+- **Integration-friendly**: Works with Docker, Kubernetes, AWS, GCP, etc.
+
+---
+
+## 2. Declarative vs Scripted Pipelines
+
+| Feature                  | Declarative | Scripted |
+|--------------------------|-------------|----------|
+| Syntax                   | Structured `pipeline {}` block | Groovy-based |
+| Readability              | ✅ High     | ❌ Medium |
+| Error Handling           | Built-in    | Manual   |
+| Flexibility              | Moderate    | High     |
+| Best for Beginners       | ✅ Yes      | ❌ No    |
+
+---
+
+## 3. Declarative Pipeline Basic Structure
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building application...'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
+
+4. Practical: AWS EC2 Declarative Pipeline Example (Java Maven Project)
+groovy
+pipeline {
+    agent any
+
+    environment {
+        APP_NAME = 'myapp.jar'
+        EC2_USER = 'ec2-user'
+        EC2_HOST = 'ec2-3-111-22-33.compute-1.amazonaws.com'
+        KEY_PATH = '/var/lib/jenkins/key.pem'
+        DEST_PATH = '/home/ec2-user/'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo '=== BUILD STAGE ==='
+                sh 'mvn clean install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo '=== TEST STAGE ==='
+                sh 'mvn test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo '=== DEPLOY STAGE ==='
+                sh """
+                    scp -o StrictHostKeyChecking=no -i ${KEY_PATH} target/${APP_NAME} ${EC2_USER}@${EC2_HOST}:${DEST_PATH}
+                    ssh -o StrictHostKeyChecking=no -i ${KEY_PATH} ${EC2_USER}@${EC2_HOST} \\
+                        'pkill -f ${APP_NAME} || true && nohup java -jar ${DEST_PATH}${APP_NAME} > app.log 2>&1 &'
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
+
+5. Step-by-Step Setup for AWS EC2
+Launch AWS EC2 instance (Ubuntu or Amazon Linux)
+
+Install Java and Maven:
+
+sudo apt update
+sudo apt install openjdk-11-jdk maven -y
+Install Jenkins:
+
+curl -fsSL https://pkg.jenkins.io/debian/jenkins.io.key | sudo tee \
+    /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+    https://pkg.jenkins.io/debian binary/ | sudo tee \
+    /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+sudo apt install jenkins -y
+
+Add your EC2 SSH Key to /var/lib/jenkins/ and set permissions:
+
+sudo chmod 400 /var/lib/jenkins/key.pem
+Create a Jenkins Pipeline job and paste the above Jenkinsfile.
+
+6. Common Jenkins Declarative Pipeline Questions & Answers
+Q1: What is the difference between Declarative and Scripted Pipelines?
+Declarative is structured with pipeline {} syntax and easier to read, while Scripted is fully Groovy-based, offering more flexibility but requiring coding skills.
+
+Q2: Why store Jenkinsfile in Git?
+Tracks changes over time
+
+Enables team collaboration
+
+Allows rollback to previous working state
+
+Automates builds when code changes
+
+Q3: What is agent in a Jenkins Pipeline?
+The agent directive tells Jenkins where to run the pipeline:
+
+any – any available executor
+
+label 'node-name' – run on a specific node
+
+docker { image 'node:14' } – run in a Docker container
+
+Q4: How to handle errors in Declarative Pipelines?
+Use the post block:
+
+groovy
+post {
+    failure {
+        echo 'Pipeline failed'
+    }
+}
+
+Q5: How to parameterize a Declarative Pipeline?
+groovy
+parameters {
+    string(name: 'VERSION', defaultValue: '1.0', description: 'App version')
+}
+
+Q6: How to run on a specific AWS Jenkins agent?
+groovy
+agent { label 'aws-node' }
+
+7. Best Practices
+Always version-control your Jenkinsfile
+Use separate stages for Build, Test, Deploy
+Parameterize deployments for flexibility
+Use post block for notifications & cleanup
+Integrate with AWS Secrets Manager for credentials
+
+✅ Day 9 takeaway: Declarative Pipelines make CI/CD pipelines maintainable, readable, and reproducible — a must-have skill for DevOps Engineers.
+
+#DevOps #Jenkins #Pipelines #AWS #CI/CD #InterviewPrep #30DaysOfDevOps
