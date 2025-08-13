@@ -1,0 +1,122 @@
+# 📅 Day 10 of 30 Days DevOps Interview Prep
+## Jenkins: Git Trigger + Build/Test/Deploy Stages
+
+---
+
+## 📖 Theory
+
+Jenkins is a CI/CD automation server that enables developers to integrate, test, and deploy code automatically.  
+One of its powerful features is **triggering builds from Git repositories** and executing **multi-stage pipelines**.
+
+### 1️⃣ Git Trigger in Jenkins
+A Git trigger ensures Jenkins automatically starts a build when code changes are pushed to the repository.
+
+#### Two main methods:
+- **SCM Polling** → Jenkins periodically checks the repository for changes.  
+  - Pros: Simple to configure  
+  - Cons: Slower, wastes resources checking when nothing changed
+- **Webhooks** → The Git hosting service (GitHub/GitLab/Bitbucket) sends a request to Jenkins when new code is pushed.  
+  - Pros: Real-time builds, efficient  
+  - Cons: Needs network access to Jenkins from the Git service
+
+---
+
+### 2️⃣ Jenkins Pipeline Stages
+In a CI/CD process, it’s best to split tasks into **stages**:
+
+- **Build Stage**: Compile code, package artifacts.  
+- **Test Stage**: Run automated unit/integration tests.  
+- **Deploy Stage**: Deploy to target environment (EC2, Docker, Kubernetes, etc.).
+
+---
+
+## 🛠 AWS Practical Setup
+
+### Step 1 – Launch AWS EC2 instance
+- **Ubuntu 22.04** or **Amazon Linux 2**
+- Open security group ports: 8080 (Jenkins), 22 (SSH), and application port.
+
+### Step 2 – Install Jenkins
+```bash
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+
+curl -fsSL https://pkg.jenkins.io/debian/jenkins.io.key | sudo tee \
+    /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+    https://pkg.jenkins.io/debian binary/ | sudo tee \
+    /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+sudo apt install jenkins -y
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+
+Step 3 – Install Maven & Git
+sudo apt install maven git -y
+
+Step 4 – Configure Jenkins Job
+Create a Pipeline job in Jenkins.
+Under Build Triggers, select:
+GitHub hook trigger for GITScm polling
+Select Pipeline script from SCM → SCM: Git → Enter repository URL.
+Add a Jenkinsfile in your repo.
+
+📜 Jenkinsfile (Tested on AWS)
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh '''
+                echo "Deploying to AWS EC2..."
+                scp -o StrictHostKeyChecking=no -i /home/ubuntu/my-key.pem \
+                target/*.jar ubuntu@<DEPLOY_SERVER_IP>:/home/ubuntu/app.jar
+                ssh -o StrictHostKeyChecking=no -i /home/ubuntu/my-key.pem \
+                ubuntu@<DEPLOY_SERVER_IP> "nohup java -jar /home/ubuntu/app.jar > app.log 2>&1 &"
+                '''
+            }
+        }
+    }
+}
+💡 Interview Questions & Detailed Answers
+Q1: How does a Git webhook trigger work in Jenkins?
+A: The Git service sends an HTTP POST request to Jenkins whenever a push happens. Jenkins then pulls the latest code and triggers the pipeline.
+
+Q2: Difference between SCM polling and webhooks?
+A: SCM polling checks periodically (time-based), webhooks push notifications in real-time.
+
+Q3: How do you pass data between pipeline stages?
+A: Use stash and unstash to store files between stages, or archiveArtifacts to store build artifacts.
+
+Q4: How do you secure deployments from Jenkins to AWS EC2?
+A: Store SSH keys in Jenkins credentials, restrict access, avoid hardcoding keys in scripts.
+
+Q5: How to rollback a deployment in Jenkins?
+A: Keep previous build artifacts archived and redeploy them when needed.
+
+✅ Key Takeaways
+Webhooks are faster and more efficient than SCM polling.
+Always separate Build, Test, and Deploy stages for maintainability.
+Store sensitive information in Jenkins credentials.
+AWS EC2 is a great environment to practice Jenkins CI/CD.
+
+#DevOps #Jenkins #AWS #GitHub #CI_CD #Automation #InterviewPrep
+
+
+
+
+
+ChatGPT can make mistakes. Chec
