@@ -1,0 +1,172 @@
+# 📅 Day 12 of 30 Days of DevOps Interview Preparation
+## Topic: GitHub Actions – CI/CD Pipeline for Node.js or Python Apps (AWS Deployment)
+
+---
+
+## 📖 THEORY
+
+### 1. What is GitHub Actions?
+GitHub Actions is GitHub's built-in CI/CD (Continuous Integration & Continuous Deployment) service.
+It allows automation of software workflows, such as building, testing, and deploying applications, 
+directly from your GitHub repository.
+
+**Key Features:**
+- Event-driven execution (on push, PR, release, cron schedules, etc.)
+- Multiple OS support: Ubuntu, Windows, macOS.
+- Integration with cloud providers like AWS, Azure, GCP.
+- Built-in secrets management.
+- Huge marketplace of pre-built actions.
+
+---
+
+### 2. Typical CI/CD Flow for Node.js or Python
+The general flow for deploying Node.js or Python applications is:
+
+1. **Trigger** → Detect changes (push or pull request).
+2. **Checkout** → Clone repo into runner.
+3. **Set up language environment** → Install Node.js/Python.
+4. **Install dependencies** → npm install / pip install.
+5. **Run tests** → Ensure app is bug-free before deployment.
+6. **Build** → Create production build (optional for Python apps).
+7. **Deploy** → Push to AWS EC2, S3, Lambda, or other services.
+
+---
+
+### 3. Why Use GitHub Actions for Node.js/Python Deployment to AWS?
+- **Direct integration** with your GitHub repository.
+- **No extra server** needed for CI/CD.
+- **Secrets management** for AWS credentials.
+- **Cross-platform builds** (Linux for production-like environments).
+- **Reusable workflows** for multiple projects.
+
+---
+
+## 🛠 PRACTICAL EXAMPLE – AWS EC2 Deployment
+
+### 1. Create GitHub Secrets
+In **Settings → Secrets and Variables → Actions**:
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `EC2_HOST` (e.g., ec2-xx-xxx-xxx.compute.amazonaws.com)
+- `EC2_USER` (usually ec2-user or ubuntu)
+- `EC2_KEY` (Base64 encoded PEM key)
+
+---
+
+### 2. Node.js Workflow Example
+```yaml
+
+name: Node.js CI/CD
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test
+
+    - name: Deploy to AWS EC2
+      env:
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        EC2_USER: ${{ secrets.EC2_USER }}
+        EC2_KEY: ${{ secrets.EC2_KEY }}
+      run: |
+        echo "$EC2_KEY" | base64 --decode > ec2_key.pem
+        chmod 600 ec2_key.pem
+        scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $EC2_USER@$EC2_HOST:/home/$EC2_USER/app
+        ssh -o StrictHostKeyChecking=no -i ec2_key.pem $EC2_USER@$EC2_HOST "cd /home/$EC2_USER/app && npm install && pm2 restart all || pm2 start app.js"
+3. Python Workflow Example
+yaml
+name: Python CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run tests
+      run: pytest
+
+    - name: Deploy to AWS EC2
+      env:
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        EC2_USER: ${{ secrets.EC2_USER }}
+        EC2_KEY: ${{ secrets.EC2_KEY }}
+      run: |
+        echo "$EC2_KEY" | base64 --decode > ec2_key.pem
+        chmod 600 ec2_key.pem
+        scp -o StrictHostKeyChecking=no -i ec2_key.pem -r ./* $EC2_USER@$EC2_HOST:/home/$EC2_USER/app
+        ssh -o StrictHostKeyChecking=no -i ec2_key.pem $EC2_USER@$EC2_HOST "cd /home/$EC2_USER/app && pip install -r requirements.txt && systemctl restart myapp"
+
+💬 INTERVIEW Q&A
+Q1: How does GitHub Actions differ from Jenkins?
+Jenkins: Self-hosted or managed server, requires setup & maintenance.
+GitHub Actions: Cloud-based, native to GitHub, no extra server needed.
+
+Q2: How do you store AWS credentials securely in GitHub Actions?
+Use GitHub Secrets under repository settings.
+Never commit credentials in code.
+Use them via ${{ secrets.SECRET_NAME }}.
+
+Q3: What’s the difference between jobs and steps?
+Job: A set of steps that run in the same environment.
+Step: An individual command or action within a job.
+
+Q4: How would you deploy without exposing SSH keys?
+Store private key as Base64 in GitHub Secrets.
+Decode during workflow execution.
+Use GitHub OIDC + AWS roles (preferred for cloud deployments).
+
+Q5: How do you run workflows for multiple Python or Node.js versions?
+strategy:
+  matrix:
+    python-version: [3.8, 3.9, 3.10]
+or
+
+strategy:
+  matrix:
+    node-version: [14, 16, 18]
+
+Q6: How do you trigger workflow only on main branch?
+on:
+  push:
+    branches: [ "main" ]
+
+Q7: How can you make deployments conditional on test success?
+GitHub Actions runs steps sequentially.
+If a step fails (exit code != 0), later steps won’t execute by default.
+
+✅ KEY TAKEAWAYS
+GitHub Actions simplifies CI/CD for GitHub-hosted projects.
+Use secrets for security.
+Always run tests before deployment.
+AWS EC2 deployment via SSH is common for small to mid-sized setups.
+Prefer cloud-native integrations for long-term security and scalability.
