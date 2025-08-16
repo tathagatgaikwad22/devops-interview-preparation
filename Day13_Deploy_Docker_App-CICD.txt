@@ -1,0 +1,100 @@
+📌 Day 13 – Deploy Docker App via CI/CD
+
+🔹 Introduction
+In modern DevOps, the ability to containerize applications with Docker and automate deployments using CI/CD pipelines is a critical skill. Almost every organization wants their engineers to build reliable, fast, and secure pipelines that deploy applications seamlessly.
+
+
+🔹 Theoretical Foundations
+1. What is Docker?
+Docker is a containerization platform that packages applications and their dependencies into lightweight containers. This ensures that the app runs the same way across environments (developer laptop → test → production).
+
+2. What is CI/CD?
+CI (Continuous Integration): Developers merge code frequently, and each change triggers automated builds and tests.
+CD (Continuous Deployment/Delivery): After successful tests, changes are deployed automatically (delivery requires approval; deployment is fully automated).
+
+3. Why Docker + CI/CD Together?
+
+✅ Consistency across all environments
+✅ Faster deployments with pre-built Docker images
+✅ Easy rollback (use previous Docker image)
+✅ Scalability (when deployed on Kubernetes, ECS, etc.)
+
+🔹 Typical CI/CD Pipeline with Docker
+
+Code Commit → Developer pushes code to GitHub/GitLab.
+Pipeline Triggered → Jenkins / GitHub Actions starts pipeline.
+Build Stage → Docker image built from Dockerfile.
+Test Stage → Automated tests run inside the container.
+Push Stage → Docker image pushed to registry (DockerHub, AWS ECR, GitHub Container Registry).
+Deploy Stage → Container deployed to staging/production (EC2, ECS, Kubernetes).
+
+🔹 Practical Example – Deploy Docker App via GitHub Actions
+
+Step 1: Dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+
+Step 2: GitHub Actions Workflow – .github/workflows/docker-ci.yml
+name: CI/CD Pipeline for Docker App
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: docker build -t my-docker-user/devops-app:latest .
+
+      - name: Push Docker Image to Docker Hub
+        run: docker push my-docker-user/devops-app:latest
+
+Step 3: Deploy on AWS EC2 (Manual Example)
+docker pull my-docker-user/devops-app:latest
+docker stop devops-app || true
+docker rm devops-app || true
+docker run -d -p 80:3000 --name devops-app my-docker-user/devops-app:latest
+
+🔹 Interview Questions with Detailed Answers
+
+Q1. Why use Docker in CI/CD pipelines?
+👉 Docker ensures the application runs consistently across environments, avoids dependency issues, and makes testing and deployments reproducible.
+
+Q2. What is the difference between CI and CD?
+CI (Continuous Integration): Automates merging, building, and testing of code.
+CD (Continuous Deployment/Delivery): Automates deployment of tested code into production.
+
+Q3. How do you optimize Docker builds in pipelines?
+👉 Use multi-stage builds, enable layer caching, use smaller base images (like Alpine), and use .dockerignore to reduce build context size.
+
+Q4. How do you handle secrets in Docker CI/CD pipelines?
+👉 Store them securely in AWS Secrets Manager, HashiCorp Vault, or CI/CD tool secrets. Never hardcode secrets in Dockerfiles or source code.
+
+Q5. What deployment strategies are commonly used with Dockerized apps?
+👉 Blue-Green Deployment, Canary Releases, Rolling Updates – all ensure zero downtime and safer releases.
+
+🔹 Key Takeaways
+Docker + CI/CD enables faster, safer, and more reliable deployments.
+Always push images to a registry before deployment.
+Optimize builds with caching and minimal base images.
+In interviews, emphasize automation, scalability, and rollback strategies.
