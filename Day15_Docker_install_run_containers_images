@@ -1,0 +1,165 @@
+Day 15 - Docker: Install, Run Containers, Images (DevOps Interview Prep)
+
+📌 Overview
+
+Today’s topic focuses on Docker fundamentals: installation, running containers, and working with images. These concepts are crucial for DevOps, Cloud, and SRE interviews, as containerization is at the heart of modern CI/CD and cloud-native applications.
+
+🔹 What is Docker?
+Docker is a containerization platform that allows you to package applications with all dependencies into lightweight, portable containers.
+Containers ensure consistency across different environments (development, testing, production).
+
+Why Docker?
+Lightweight compared to VMs
+Portable and scalable
+Faster deployments
+Easy integration with CI/CD pipelines
+
+🔹 Installing Docker
+
+On Linux (Ubuntu)
+
+# Update package index
+sudo apt-get update
+
+# Install required packages
+sudo apt-get install ca-certificates curl gnupg lsb-release -y
+
+# Add Docker’s official GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Setup repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+
+# Verify installation
+docker --version
+
+On AWS EC2 (Amazon Linux)
+
+# Update packages
+sudo yum update -y
+
+# Install Docker
+sudo amazon-linux-extras install docker -y
+
+# Start and enable Docker
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Add user to docker group (optional)
+sudo usermod -aG docker ec2-user
+
+# Verify
+docker --version
+
+🔹 Working with Docker Images & Containers
+
+Pulling an Image
+
+# Pull official Nginx image
+docker pull nginx
+
+Running a Container
+
+# Run Nginx container on port 8080
+docker run -d -p 8080:80 nginx
+
+Listing Containers
+
+# Running containers
+docker ps
+
+# All containers
+docker ps -a
+
+Stopping & Removing Containers
+
+# Stop a container
+docker stop <container_id>
+
+# Remove a container
+docker rm <container_id>
+
+Building a Custom Image
+
+# Dockerfile
+FROM python:3.9-slim
+WORKDIR /app
+COPY app.py /app
+RUN pip install flask
+CMD ["python", "app.py"]
+
+# Build the image
+docker build -t flask-app .
+
+# Run container
+docker run -d -p 5000:5000 flask-app
+
+🔹 Practical on AWS (Step-by-Step)
+
+Launch an EC2 instance (Amazon Linux 2, t2.micro, security group open for port 80/5000).
+Install Docker (commands above).
+Pull Nginx image:
+docker pull nginx
+docker run -d -p 80:80 nginx
+Access http://<EC2-Public-IP> → You should see the Nginx welcome page.
+Deploy a custom Flask app using Dockerfile (build & run as shown above).
+
+🔹 Interview Questions with Answers
+
+Q1: What is the difference between Docker and a Virtual Machine?
+Answer: VMs virtualize the hardware, while Docker virtualizes the OS. Docker containers are lightweight and share the host OS kernel, making them faster and less resource-intensive compared to VMs.
+
+Q2: What is the difference between Docker images and containers?
+Answer:
+Image → Blueprint (read-only)
+Container → Running instance of an image (mutable)
+
+Q3: How do you persist data in Docker?
+Answer: By using volumes or bind mounts.
+docker run -d -v /host/data:/container/data nginx
+
+Q4: What is the difference between docker run and docker start?
+Answer:
+docker run → Creates a new container from an image.
+docker start → Starts an existing (stopped) container.
+
+Q5: How do you check logs of a container?
+docker logs <container_id>
+
+Q6: Explain ENTRYPOINT vs CMD in Dockerfile.
+Answer:
+ENTRYPOINT → Defines the main executable.
+CMD → Provides default arguments (overridden at runtime).
+
+Q7: What are common Docker use cases in DevOps?
+Application packaging
+CI/CD pipeline integration
+Microservices deployments
+Testing in isolated environments
+
+Q8: How do you remove dangling images?
+docker image prune
+
+Q9: What is Docker Hub?
+Answer: A public registry where developers can push/pull container images.
+
+Q10: How do you optimize Docker images?
+Use lightweight base images (e.g., alpine)
+Minimize layers
+Use .dockerignore
+Combine RUN statements
+
+📖 Summary
+
+✅ Installed Docker on Linux & AWS EC2
+✅ Learned to run, stop, and remove containers
+✅ Built custom Docker images with Dockerfile
+✅ Hands-on practical with Nginx & Flask app on AWS
+✅ Reviewed 10 key interview questions on Docker
+
