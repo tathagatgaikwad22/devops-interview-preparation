@@ -1,0 +1,115 @@
+# 🚀 Day 17 of 30 Days DevOps Interview Preparation Challenge
+## Topic: Push Image to DockerHub  
+
+---
+
+## 📖 Theory  
+
+**DockerHub** is the default cloud-based **container registry** used for storing, managing, and sharing Docker images.  
+It acts as a **central hub**, allowing developers and DevOps engineers to:  
+- Store container images in **public or private repositories**.  
+- Pull images into CI/CD pipelines, Kubernetes clusters, or cloud platforms.  
+- Use **versioned tags** (e.g., `v1`, `latest`, `staging`) to manage releases.  
+- Automate builds and scan images for vulnerabilities.  
+
+Why use DockerHub?  
+- Collaboration across teams.  
+- Portability: run the same image in dev, test, and prod.  
+- Integration with CI/CD tools (Jenkins, GitHub Actions, GitLab CI, ArgoCD).  
+- Easy distribution of applications worldwide.  
+
+---
+
+## 🛠️ Practical: Push Docker Image to DockerHub  
+
+We’ll demonstrate pushing a **Node.js app image** to DockerHub using **AWS EC2**.  
+
+### Step 1: Setup Docker on AWS EC2  
+```bash
+sudo apt-get update -y
+sudo apt-get install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+👉 Re-login to apply group changes.
+
+Step 2: Create DockerHub Account & Repo
+Go to DockerHub.
+Create a repository (e.g., your-username/myapp).
+
+Step 3: Build Docker Image
+Create a simple app:
+
+app.js
+
+const express = require("express");
+const app = express();
+app.get("/", (req, res) => res.send("Hello from DockerHub!"));
+app.listen(3000, () => console.log("App running on port 3000"));
+
+
+Dockerfile
+
+FROM node:16
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["node", "app.js"]
+Build the image:
+docker build -t myapp:latest .
+
+
+Step 4: Tag Docker Image
+docker tag myapp:latest your-username/myapp:v1
+
+Step 5: Login and Push to DockerHub
+docker login
+# Enter DockerHub username & password
+docker push your-username/myapp:v1
+
+Step 6: Verify & Run from DockerHub
+Pull and run the image on any machine:
+docker pull your-username/myapp:v1
+docker run -d -p 3000:3000 your-username/myapp:v1
+
+🎯 Interview Q&A
+🔹 Q1. Why push Docker images to DockerHub?
+👉 To share, collaborate, and deploy images across teams and environments. DockerHub acts as a central repository, ensuring consistency.
+
+🔹 Q2. What’s the difference between docker push and docker save?
+docker push: Uploads an image to a remote registry (e.g., DockerHub).
+docker save: Exports an image to a tar file for local distribution.
+
+🔹 Q3. How do you secure Docker images in DockerHub?
+Use private repositories for sensitive images.
+Enable Docker Content Trust (DCT) for signed images.
+Regularly scan images for vulnerabilities.
+Apply least privilege access policies.
+
+🔹 Q4. Difference between DockerHub and AWS ECR?
+DockerHub: Public registry, open-source focused, widely used.
+AWS ECR: Private, AWS-integrated, better for enterprises using AWS (IAM integration, VPC access).
+
+🔹 Q5. How are DockerHub images used in CI/CD pipelines?
+👉 Workflow:
+Build application → create Docker image.
+CI server (Jenkins/GitHub Actions) tags & pushes image to DockerHub.
+CD tool (Kubernetes, ECS, ArgoCD) pulls the image for deployment.
+
+🔹 Q6. Best practices for tagging Docker images?
+Use semantic versioning (e.g., v1.0.0, v1.0.1).
+Avoid using only latest in production.
+Maintain separate tags for dev, staging, and production.
+
+🔹 Q7. What are common issues when pushing images to DockerHub?
+Authentication errors → fix with docker login.
+Large image size → optimize Dockerfile with multi-stage builds.
+Permission denied → ensure repo exists and username matches.
+
+✅ Key Takeaways
+DockerHub is like GitHub for containers.
+Always tag images properly for version control.
+Security is critical: scan, sign, and use private repos.
+CI/CD pipelines rely heavily on pushing/pulling from registries.
