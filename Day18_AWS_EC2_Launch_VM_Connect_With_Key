@@ -1,0 +1,106 @@
+# 🚀 Day 18 of 30 Days DevOps Interview Preparation  
+## AWS EC2: Launch VM & Connect with Key  
+
+This file is part of my **30 Days DevOps Interview Preparation Challenge**.  
+Today’s focus: **AWS EC2 – Launching Virtual Machines and Connecting Securely using Key Pairs**.  
+
+---
+
+## 📌 What is AWS EC2?  
+
+AWS **Elastic Compute Cloud (EC2)** provides scalable virtual machines in the cloud.  
+Key features:  
+- Pay-as-you-go compute power.  
+- Multiple operating systems via AMIs (Amazon Machine Images).  
+- Different pricing models (On-Demand, Reserved, Spot).  
+- Integration with AWS services like S3, IAM, VPC, CloudWatch.  
+
+Think of EC2 as a **cloud computer** that you rent from AWS.
+
+---
+
+## ⚙️ Step-by-Step: Launching an EC2 Instance  
+
+### **1. Log in to AWS Console**
+- Go to [AWS Console](https://aws.amazon.com/console/).  
+- Navigate to **EC2** service.  
+
+### **2. Launch Instance**
+- Click **Launch Instance**.  
+- Select **Amazon Machine Image (AMI)** (e.g., Amazon Linux 2, Ubuntu).  
+
+### **3. Choose Instance Type**
+- Select `t2.micro` for free tier.  
+
+### **4. Configure Key Pair**
+- Create/download a **Key Pair (.pem)**.  
+- This will be used to securely connect via SSH.  
+
+### **5. Configure Security Group**
+- Allow **SSH (22)** for your IP.  
+- Add rules for **HTTP (80)** or **HTTPS (443)** if needed.  
+
+### **6. Launch & Connect**
+- Copy the **Public IP** once instance is running.  
+- Connect using SSH:
+
+chmod 400 mykey.pem
+ssh -i mykey.pem ec2-user@<Public-IP>
+✅ You’re inside your AWS virtual machine now!
+
+🔐 Security Best Practices for EC2
+Restrict SSH to only your IP (avoid 0.0.0.0/0).
+Never share .pem files.
+Assign an Elastic IP if a static IP is needed.
+Use IAM roles instead of embedding access keys.
+Enable CloudWatch monitoring for metrics.
+
+💡 Practical Demo: Deploy a Web Server
+Install and run Nginx on EC2:
+
+sudo yum update -y
+sudo amazon-linux-extras install nginx1 -y
+sudo systemctl start nginx
+sudo systemctl enable nginx
+Now visit:
+
+http://<EC2-Public-IP>
+You’ll see the Nginx Welcome Page 🎉
+
+❓ Common EC2 Interview Questions & Answers
+Q1. What is an AMI in AWS EC2?
+👉 An Amazon Machine Image (AMI) is a template containing the OS, application server, and configurations used to launch instances.
+
+Q2. What’s the difference between On-Demand, Reserved, and Spot Instances?
+On-Demand: Flexible, pay-per-use, no commitment.
+Reserved: 1–3 year commitment, cheaper for predictable workloads.
+Spot: Up to 90% cheaper, but can be terminated anytime.
+
+Q3. How do you connect to an EC2 instance securely?
+👉 Using SSH with the .pem key pair created during launch:
+ssh -i mykey.pem ec2-user@<Public-IP>
+
+Q4. Why might you fail to SSH into EC2?
+Possible reasons:
+Security Group doesn’t allow inbound SSH (port 22).
+Wrong key permissions (chmod 400).
+Wrong username (ec2-user for Amazon Linux, ubuntu for Ubuntu).
+Instance not running or incorrect Public IP.
+
+Q5. How does EC2 fit into DevOps pipelines?
+Acts as a build/test server in CI/CD pipelines.
+Hosts containerized or non-containerized applications.
+Can run self-hosted GitHub Actions runners or Jenkins agents.
+
+📌 Key Takeaways for Day 18
+Learned how to launch & connect to an EC2 instance.
+Understood security best practices for EC2.
+Practiced deploying a simple Nginx server.
+Revised frequent EC2 interview Q&A.
+
+🔥 What’s Next?
+👉 Day 19: Continue AWS Hands-on – Security Groups & Elastic IP
+
+Stay tuned and follow the repo for more updates 🚀
+
+#DevOps #AWS #EC2 #CloudComputing #InterviewPreparation #30DaysOfDevOps
