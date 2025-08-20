@@ -1,0 +1,115 @@
+# 🚀 Day 19 of 30 Days DevOps Interview Preparation  
+## Topic: AWS IAM + S3 (Users, Roles, Upload Files)
+
+Welcome to Day 19! Today we dive into **AWS Identity and Access Management (IAM)** and **Amazon S3**, two of the most fundamental building blocks in AWS cloud security and storage.  
+
+---
+
+## 📘 Theory
+
+### 🔑 AWS IAM (Identity and Access Management)
+IAM is a secure way to manage **access** to AWS resources.  
+- **Users** → Individual accounts with credentials (username, password, access keys).  
+- **Groups** → Collection of users with shared permissions.  
+- **Roles** → Temporary credentials for AWS services or federated access.  
+- **Policies** → JSON-based permissions documents attached to users, groups, or roles.  
+
+✅ Best Practices:
+- Follow **principle of least privilege**.  
+- Use **MFA (Multi-Factor Authentication)** for extra security.  
+- Avoid using **root account** for daily tasks.  
+
+---
+
+### 🪣 Amazon S3 (Simple Storage Service)
+S3 is an **object storage service** used to store files (objects) inside **buckets**.  
+- **Buckets** → Top-level containers for storing data.  
+- **Objects** → Files with metadata stored inside buckets.  
+- **Storage Classes** → Standard, Infrequent Access, Glacier, etc.  
+- **Versioning** → Keep multiple versions of the same file.  
+- **Encryption** → Protect files at rest and in transit.  
+
+✅ Use Cases:  
+- Backup & restore  
+- Hosting static websites  
+- Big data storage  
+- Application logs  
+
+---
+
+## 🛠 Practical: Step-by-Step  
+
+### 1️⃣ Create IAM User
+1. Go to **AWS Management Console → IAM**.  
+2. Click **Users → Add user**.  
+3. Choose `Programmatic access` (for CLI/SDK) or `AWS Management Console access`.  
+4. Attach an existing policy (e.g., `AmazonS3FullAccess`).  
+5. Download `.csv` file with **Access Key & Secret Key**.  
+
+---
+
+### 2️⃣ Configure AWS CLI with IAM User
+```bash
+aws configure
+AWS Access Key ID [None]: <YourAccessKey>
+AWS Secret Access Key [None]: <YourSecretKey>
+Default region name [None]: ap-south-1
+Default output format [None]: json
+
+3️⃣ Create an S3 Bucket
+
+aws s3 mb s3://devops-interview-prep-day19
+
+4️⃣ Upload a File to S3
+
+echo "Hello from Day 19 of DevOps Prep!" > day19.txt
+aws s3 cp day19.txt s3://devops-interview-prep-day19/
+
+5️⃣ List Files in S3 Bucket
+
+aws s3 ls s3://devops-interview-prep-day19/
+
+6️⃣ Attach IAM Role to EC2 for S3 Access
+Go to IAM → Roles → Create Role.
+
+Choose EC2 as trusted entity.
+
+Attach AmazonS3ReadOnlyAccess policy.
+
+Attach this role to an EC2 instance.
+
+Verify from EC2 terminal:
+
+aws s3 ls s3://devops-interview-prep-day19/
+
+💡 Common Interview Questions (with Answers)
+Q1: What is the difference between an IAM User and an IAM Role?
+Answer:
+IAM User is tied to a person or application with long-term credentials.
+IAM Role is temporary and assumed by AWS services or external identities.
+
+Q2: How does S3 ensure data durability?
+Answer: Amazon S3 provides 11 nines of durability (99.999999999%) by automatically replicating objects across multiple availability zones.
+
+Q3: How do you secure S3 buckets?
+Answer:
+Enable bucket policies and IAM policies.
+Use MFA delete for extra protection.
+Apply encryption (SSE-S3 or SSE-KMS).
+Block public access unless explicitly required.
+
+Q4: What is the difference between S3 and EBS?
+Answer:
+S3 is object storage (scalable, global access).
+EBS is block storage (attached to EC2 instances, high-performance).
+
+Q5: How would you allow EC2 to upload files to S3 without credentials?
+Answer: By creating an IAM Role with S3 write permissions and attaching it to the EC2 instance.
+
+📌 Summary
+IAM is the security backbone of AWS.
+
+S3 is a scalable storage service used everywhere in cloud-native apps.
+
+Together, IAM + S3 form the basis for secure data storage and access control.
+
