@@ -1,0 +1,146 @@
+# 🚀 Day 20 of #90DaysOfDevOps – Simple CI/CD Pipeline to AWS EC2 using SSH  
+
+## 🌟 Introduction  
+Deployments are the heart of DevOps. Traditionally, teams used to manually copy code to servers and restart applications — a slow and error-prone process.  
+
+With **CI/CD (Continuous Integration and Continuous Deployment)**, we automate this entire process.  
+
+In this guide, we will build a **simple CI/CD pipeline** that deploys code from **GitHub → AWS EC2 instance** using **SSH**.  
+
+---
+
+## 🧠 Theory: What is CI/CD?  
+
+### ✅ Continuous Integration (CI)  
+Developers merge code frequently into a shared repository. Every commit triggers **builds and tests** automatically.  
+
+### ✅ Continuous Deployment (CD)  
+Once code passes tests, it is **automatically deployed** to servers without manual intervention.  
+
+### Why EC2 + SSH for CI/CD?  
+- Easy for beginners to set up.  
+- Works with any application (Node.js, Python, Java, etc.).  
+- No extra AWS services required.  
+- Perfect foundation before moving to advanced tools like Jenkins, AWS CodeDeploy, or Kubernetes.  
+
+---
+
+## ⚡ Practical: CI/CD Pipeline to EC2 using SSH  
+
+We’ll configure GitHub Actions to automatically deploy code to an **EC2 instance** via SSH whenever code is pushed to the `main` branch.  
+
+---
+
+### 🔹 Step 1: Launch an EC2 Instance  
+1. Go to **AWS EC2 Console** → Launch a new Ubuntu EC2 instance.  
+2. Select a **Security Group** that allows:  
+   - SSH (22)  
+   - Your app port (e.g., 80 or 3000)  
+3. Download the `.pem` private key for SSH access.  
+
+---
+
+### 🔹 Step 2: Connect to EC2 and Install Dependencies  
+
+SSH into your instance:  
+```bash
+ssh -i mykey.pem ubuntu@<EC2_PUBLIC_IP>
+
+Install dependencies (example: Node.js app):
+
+sudo apt update -y
+sudo apt install git -y
+sudo apt install nodejs npm -y
+
+Clone your project:
+
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
+npm install
+
+🔹 Step 3: Create a Deployment Script on EC2
+Create a script deploy.sh in your project folder:
+
+#!/bin/bash
+cd /home/ubuntu/<your-repo>
+git pull origin main
+npm install
+pm2 restart app || pm2 start app.js --name app
+echo "Deployment successful!"
+
+Make it executable:
+chmod +x deploy.sh
+
+🔹 Step 4: Setup GitHub Actions for CI/CD
+Create a workflow file .github/workflows/deploy.yml:
+
+name: CI/CD to EC2 via SSH
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/<your-repo>
+            git pull origin main
+            npm install
+            pm2 restart app || pm2 start app.js --name app
+
+🔹 Step 5: Configure GitHub Secrets
+Go to your GitHub repo → Settings → Secrets and Variables → Add the following:
+
+EC2_HOST → EC2 Public IP
+
+EC2_SSH_KEY → Contents of your .pem file
+
+🔹 Step 6: Test the Pipeline
+Push code changes to the main branch.
+
+GitHub Actions will run the workflow.
+
+Code is deployed automatically to your EC2 instance 🎉
+
+🔐 Best Practices
+Use PM2 (or systemd) to keep apps running in background.
+
+Restrict SSH access to your IP address only (avoid 0.0.0.0/0).
+
+For production → prefer AWS CodeDeploy, Jenkins, or GitHub Actions with Docker.
+
+🎯 Interview Questions & Answers
+Q1: Why use SSH for CI/CD to EC2?
+👉 It’s the simplest method to deploy code directly to servers for beginners.
+
+Q2: What are the limitations of this method?
+👉 Not scalable, manual key management, not ideal for microservices or production environments.
+
+Q3: How would you improve this setup?
+👉 Use AWS CodeDeploy, Ansible, or containerized deployments with Docker + ECS/Kubernetes.
+
+Q4: Is a Security Group necessary for this setup?
+👉 Yes, EC2 must allow SSH (22) and your app port (80/3000) for the pipeline to work.
+
+🏁 Conclusion
+We successfully built a simple CI/CD pipeline that deploys code to an EC2 instance via SSH. This approach is:
+
+Great for learning CI/CD basics
+
+Lightweight for small projects
+
+A stepping stone toward advanced DevOps practices
+
+🚀 Next, we’ll enhance this pipeline with better automation and monitoring.
