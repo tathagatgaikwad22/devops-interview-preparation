@@ -1,0 +1,160 @@
+# 🚀 Day 23 – Provision EC2 with Terraform  
+*30 Days DevOps Interview Preparation Challenge*  
+
+---
+
+## 📌 Introduction  
+
+Today’s topic is **Provisioning EC2 with Terraform**.  
+Terraform is a widely used **Infrastructure as Code (IaC)** tool that enables developers and DevOps engineers to automate the provisioning of infrastructure across multiple cloud providers.  
+
+Instead of manually creating resources in the AWS Management Console, you can write Terraform configuration files (`.tf`) that describe your infrastructure in a **declarative way**.  
+
+---
+
+## 🔹 Why Terraform for EC2?  
+
+- **Automation**: No need for manual clicks in AWS Console.  
+- **Consistency**: Same configuration file can be used across environments (dev, test, prod).  
+- **Version Control**: Infrastructure changes can be tracked in Git.  
+- **Multi-Cloud**: Supports AWS, Azure, GCP, Kubernetes, and more.  
+- **Reusability**: Modules allow you to reuse configurations.  
+
+---
+
+## 🔹 Terraform Workflow  
+
+1. **Write** `.tf` configuration files.  
+2. **Initialize** with `terraform init`.  
+3. **Preview** execution plan using `terraform plan`.  
+4. **Apply** changes with `terraform apply`.  
+5. **Destroy** resources with `terraform destroy`.  
+
+---
+
+## 🔹 Practical: Provisioning EC2 with Terraform  
+
+### Step 1: Create `main.tf`  
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_instance" "my_ec2" {
+  ami           = "ami-08c40ec9ead489470" # Amazon Linux 2 AMI
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "Terraform-EC2"
+  }
+}
+
+Step 2: Initialize Terraform
+
+terraform init
+
+Step 3: Preview Execution Plan
+
+terraform plan
+
+Step 4: Apply Configuration
+
+terraform apply -auto-approve
+
+Step 5: Destroy Resources (Optional)
+terraform destroy -auto-approve
+🔹 Advanced Example with User Data
+
+resource "aws_instance" "my_ec2" {
+  ami           = "ami-08c40ec9ead489470"
+  instance_type = "t2.micro"
+
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              yum install -y httpd
+              systemctl start httpd
+              systemctl enable httpd
+              echo "Hello from Terraform EC2" > /var/www/html/index.html
+              EOF
+
+  tags = {
+    Name = "Terraform-EC2-WebServer"
+  }
+}
+This EC2 instance will automatically install Apache HTTPD and serve a webpage on startup.
+
+🔹 Interview Questions and Detailed Answers
+✅ Q1. What is Terraform and how is it different from AWS CloudFormation?
+Answer:
+Terraform: Multi-cloud IaC tool (AWS, Azure, GCP, Kubernetes, etc.).
+
+CloudFormation: AWS-only.
+
+Terraform uses HCL (HashiCorp Configuration Language), CloudFormation uses JSON/YAML.
+
+Terraform relies on a state file to track resources.
+
+Terraform supports modules for reusable configurations.
+
+✅ Q2. What are providers in Terraform?
+Answer:
+Providers are plugins that allow Terraform to interact with APIs of cloud platforms or services.
+
+Example: aws, azurerm, google, kubernetes.
+
+The provider block defines which cloud you are targeting.
+
+✅ Q3. What is the difference between terraform plan and terraform apply?
+Answer:
+terraform plan: Shows a preview of what Terraform will do without making any changes.
+
+terraform apply: Actually provisions or updates the infrastructure.
+
+✅ Q4. How does Terraform maintain the state of resources?
+Answer:
+Terraform uses a state file (terraform.tfstate).
+
+It records which resources exist and their current configuration.
+
+Without state, Terraform wouldn’t know if resources already exist.
+
+Best practice: Store state remotely (e.g., S3 + DynamoDB) for team collaboration and locking.
+
+✅ Q5. How do you manage multiple environments (dev, staging, prod) in Terraform?
+Answer:
+Workspaces → terraform workspace new dev
+
+Separate directories → dev/, staging/, prod/
+
+Variables & tfvars files → terraform apply -var-file=dev.tfvars
+
+✅ Q6. How can you make Terraform configurations reusable?
+Answer:
+Use Modules: Package common infrastructure (e.g., VPC, EC2, IAM roles) into modules.
+
+Example: A module for EC2 can be reused across different projects/environments.
+
+🔹 Pro Tips for Interview
+Always mention Security Groups, IAM roles, EBS volumes, and Load Balancers when discussing EC2 provisioning with Terraform.
+
+Highlight idempotency (same code = same infrastructure).
+
+Explain remote state management for teamwork.
+
+Mention Terraform modules as a best practice.
+
+📌 Conclusion
+Provisioning EC2 with Terraform is one of the first steps to mastering Infrastructure as Code (IaC).
+It’s a critical skill for DevOps engineers to:
+
+Automate deployments,
+
+Ensure consistency, and
+
+Scale infrastructure seamlessly.
+
+Tomorrow (Day 24), we will continue with another important DevOps concept. 🚀
+
+#DevOps #AWS #Terraform #IaC #Cloud #InterviewPreparation #30DaysOfDevOps
