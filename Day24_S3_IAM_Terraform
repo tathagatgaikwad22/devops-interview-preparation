@@ -1,0 +1,160 @@
+📌 Day 24 of 30 Days DevOps Interview Preparation Challenge
+
+Topic: Add S3 + IAM Role via Terraform
+
+🔎 Theory
+📍 AWS S3 (Simple Storage Service)
+
+Fully managed object storage service.
+
+Stores files, logs, backups, and even static websites.
+
+Data is stored in Buckets (globally unique names).
+
+Security features:
+
+Block Public Access
+
+Server-Side Encryption (SSE-S3 or SSE-KMS)
+
+Bucket Policies & IAM Policies
+
+Versioning (track file changes)
+
+📍 AWS IAM Role
+
+An identity in AWS that defines permissions, but without permanent credentials.
+
+Can be assumed by AWS services (EC2, Lambda, etc.) or users.
+
+Safer than Access Keys (no static credentials, temporary tokens).
+
+📍 IAM Policy
+
+JSON document that grants or denies permissions.
+
+Attached to Users, Groups, or Roles.
+
+Example: Allow EC2 to read objects from a specific S3 bucket.
+
+💡 Interview Q&A
+
+Q1. Why prefer IAM Role over Access Keys?
+👉 Roles provide temporary credentials rotated automatically by AWS. Keys are static and risky if leaked.
+
+Q2. How to secure an S3 bucket?
+👉
+
+Enable encryption (AES-256 or KMS).
+
+Enable versioning.
+
+Block public access.
+
+Use IAM policies with least privilege.
+
+Apply logging & monitoring.
+
+Q3. What happens if you attach AdministratorAccess to a role?
+👉 It gives full access to all AWS resources, which violates least privilege. Always create custom fine-grained policies.
+
+Q4. How does Terraform manage IAM resources?
+👉 Terraform state tracks IAM roles/policies. If policy code changes, Terraform updates AWS automatically (terraform apply).
+
+Q5. What’s the difference between IAM Role and IAM Policy?
+👉 Role = Who can access. Policy = What actions are allowed.
+
+🛠️ Practical – Provision S3 + IAM Role using Terraform
+✅ Prerequisites
+
+AWS account
+
+IAM User with AdministratorAccess or PowerUserAccess
+
+Terraform installed (on Windows/Linux)
+
+VS Code editor (with HashiCorp Terraform extension)
+
+Step 1: Configure AWS Provider
+
+main.tf
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+Step 2: Create S3 Bucket
+resource "aws_s3_bucket" "devops_bucket" {
+  bucket = "devops-challenge-day24-bucket"
+  acl    = "private"
+
+  tags = {
+    Name = "DevOps-Day24"
+  }
+}
+
+Step 3: Create IAM Role + Policy
+# IAM Role for EC2
+resource "aws_iam_role" "ec2_role" {
+  name = "ec2-s3-access-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+# IAM Policy for S3 Read-Only
+resource "aws_iam_policy" "s3_read_only" {
+  name        = "S3ReadOnlyPolicy"
+  description = "Allow read access to S3 bucket"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action   = ["s3:GetObject"]
+      Effect   = "Allow"
+      Resource = "${aws_s3_bucket.devops_bucket.arn}/*"
+    }]
+  })
+}
+
+# Attach Policy to Role
+resource "aws_iam_role_policy_attachment" "attach" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.s3_read_only.arn
+}
+
+Step 4: Run Terraform Commands
+terraform init
+terraform plan
+terraform apply -auto-approve
+
+Step 5: Verify
+
+Open AWS Console > S3 → Bucket should exist.
+
+Open AWS Console > IAM > Roles → Role created with attached policy.
+
+🔐 Security Best Practices
+
+✔ Always use IAM Roles over Access Keys.
+✔ Enable S3 Encryption by default.
+✔ Use least privilege policies (only required actions).
+✔ Block public access unless explicitly needed.
+✔ Store Terraform code in GitHub/Version Control.
+✔ Use remote backend (S3 + DynamoDB) for Terraform state in production.
+
+📌 Key Takeaways
+
+Terraform automates creation of S3 Buckets and IAM Roles.
+
+IAM Roles > Access Keys for security.
+
+Always use least privilege policies.
+
+In interviews, be ready to explain how Terraform integrates with IAM & S3.
+
