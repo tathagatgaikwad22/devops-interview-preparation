@@ -1,0 +1,141 @@
+# 🚀 Day 27 – Kubernetes Basics  
+
+Welcome to Day 27 of the 30 Days DevOps Interview Preparation Challenge.  
+Today’s focus is on **Kubernetes Basics**: installation, core concepts, practical commands, and interview preparation.  
+
+---
+
+## 🔹 What is Kubernetes?  
+
+Kubernetes (also called **K8s**) is an **open-source container orchestration platform** used to automate:  
+- Deployment of applications  
+- Scaling workloads up/down  
+- Self-healing (restarting failed containers)  
+- Service discovery and load balancing  
+
+Kubernetes helps teams run **containerized applications at scale**, ensuring high availability and zero downtime deployments.  
+
+---
+
+## 🔹 Key Kubernetes Components  
+
+1. **Pod** – Smallest unit in Kubernetes. A Pod can contain one or more containers.  
+2. **Deployment** – Defines how Pods are created and managed. Supports scaling and rolling updates.  
+3. **Service** – Provides stable networking to Pods.  
+   - **ClusterIP**: Default. Internal communication within cluster.  
+   - **NodePort**: Exposes service on a port accessible externally.  
+   - **LoadBalancer**: Integrates with cloud load balancers (AWS, GCP, Azure).  
+4. **Namespace** – Logical partition inside a cluster to separate resources.  
+5. **kubectl** – CLI tool to interact with Kubernetes API.  
+
+---
+
+## 🔹 Kubernetes Installation  
+
+### Prerequisites  
+- OS: Linux (Ubuntu) or Mac (Windows via WSL2)  
+- Minimum: 2 CPUs, 4GB RAM  
+- Installed tools: Docker, kubectl, Minikube OR AWS CLI + eksctl  
+
+---
+
+### 🛠️ Local Installation with Minikube  
+
+```bash
+# Install Docker
+sudo apt-get update
+sudo apt-get install -y docker.io
+
+# Install kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+
+# Install Minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/
+
+# Start cluster
+minikube start --driver=docker
+
+# Verify
+kubectl get nodes
+
+🛠️ Kubernetes on AWS (EKS Setup)
+# Install AWS CLI
+sudo apt-get install -y awscli
+
+# Install eksctl
+curl --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz
+sudo mv eksctl /usr/local/bin
+
+# Install kubectl
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/latest/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin
+
+Create cluster:
+eksctl create cluster \
+--name demo-cluster \
+--region ap-south-1 \
+--nodes 2 \
+--node-type t3.medium \
+--managed
+
+Verify:
+kubectl get nodes
+kubectl cluster-info
+
+🔹 Kubernetes Practical Examples
+Create a Deployment
+kubectl create deployment nginx-deploy --image=nginx --replicas=2
+Expose Deployment via NodePort
+kubectl expose deployment nginx-deploy --type=NodePort --port=80
+kubectl get svc
+Scale Deployment
+kubectl scale deployment nginx-deploy --replicas=5
+Rolling Update
+kubectl set image deployment/nginx-deploy nginx=nginx:1.21
+Rollback
+kubectl rollout undo deployment/nginx-deploy
+
+🔹 Useful kubectl Commands
+kubectl get nodes
+kubectl get pods
+kubectl get deployments
+kubectl describe pod <pod-name>
+kubectl delete pod <pod-name>
+
+🎯 Interview Questions with Detailed Answers
+Q1: What is a Pod in Kubernetes?
+👉 A Pod is the smallest deployable unit in Kubernetes. It can run one or more containers that share storage and network resources. Pods are ephemeral – if a Pod dies, Kubernetes replaces it automatically.
+
+Q2: Difference between Deployment and ReplicaSet?
+👉 A ReplicaSet ensures a specific number of Pod replicas run at any given time. A Deployment manages ReplicaSets and provides rolling updates & rollbacks.
+
+Q3: What are Kubernetes Services and why are they needed?
+👉 Services provide stable networking to Pods. Since Pods are ephemeral (IP changes), Services act as a permanent entry point for communication (ClusterIP, NodePort, LoadBalancer).
+
+Q4: What’s the difference between NodePort and LoadBalancer?
+👉 NodePort exposes the service on each worker node’s IP at a static port. LoadBalancer integrates with cloud provider’s load balancer to provide a single external IP.
+
+Q5: How does Kubernetes achieve high availability?
+👉 By distributing workloads across multiple nodes, auto-restarting failed containers, rescheduling Pods on healthy nodes, and enabling scaling on demand.
+
+Q6: Explain rolling updates vs rollbacks in Kubernetes.
+👉 Rolling updates allow upgrading Pods gradually without downtime. Rollbacks restore the previous version if the new deployment fails.
+
+Q7: Can Kubernetes run without Docker?
+👉 Yes. Kubernetes supports container runtimes like containerd, CRI-O. Docker was deprecated as the default runtime in Kubernetes v1.20+.
+
+✅ Key Takeaways
+Kubernetes is the most popular container orchestration tool.
+
+Start with Minikube for learning, move to EKS for real-world practice.
+
+Pods, Deployments, and Services are the core building blocks.
+
+Mastering kubectl is essential for DevOps interviews.
+
+Always be ready to explain real-world use cases of Kubernetes in CI/CD pipelines.
+
